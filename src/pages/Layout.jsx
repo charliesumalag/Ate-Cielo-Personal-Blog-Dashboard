@@ -4,11 +4,11 @@ import Nav from './Nav'
 
 const Layout = () => {
   return (
-    <div className='flex gap-12'>
+    <div className='flex gap-8 h-screen'>
       <div>
         <Nav />
       </div>
-      <div>
+      <div className='py-6'>
         <Outlet />
       </div>
     </div>
