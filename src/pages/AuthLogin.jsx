@@ -1,11 +1,17 @@
-import React, { useReducer, useState } from 'react'
+import React, { useContext, useReducer, useState } from 'react'
+import { useNavigate } from "react-router-dom";
 
 const AuthLogin = () => {
+    const {setToken} = useContext(AppContext);
+    const navigate = useNavigate();
     const initialState = {
         username: '',
         password: '',
         errors: {},
+        isSubmitting: false,
     }
+
+
 
     function reducer(state, action) {
         switch (action.type) {
@@ -20,13 +26,18 @@ const AuthLogin = () => {
                     errors: action.errors,
                 }
             }
+            case 'submit' : {
+                return {
+                    ...state,
+                    isSubmitting: true,
+                }
+            }
             default:
                 return state;
         }
     }
     const [state, dispatch] = useReducer(reducer, initialState)
 
-    console.log(state);
 
     const [isHover, setIsHover] = useState(false);
 
@@ -38,7 +49,62 @@ const AuthLogin = () => {
             value: value
         })
     }
+    const handleSubmit = async (e) => {
 
+        const errs = {};
+        e.preventDefault();
+
+        if (!state.username){
+            errs.username = 'Username Requried';
+        }
+        if (!state.password){
+            errs.password = 'Password Required';
+        }else if (state.password.length < 4){
+            errs.password = 'Password must be at least 4 characters'
+        }
+
+
+        if (Object.keys(errs).length !== 0) {
+            dispatch({
+                type: 'setErrors',
+                errors: errs
+            })
+        }else{
+            dispatch({
+                type: 'submit',
+            })
+            console.log(state.username, state.password);
+
+
+            try {
+                const res = await fetch("/api/login", {
+                    method: 'post',
+                    body: JSON.stringify({
+                        username: state.username,
+                        password: state.password
+                    })
+                })
+                if (!res.ok) {
+                    const data = await res.json();
+                    dispatch({
+                        type: 'setErrors',
+                        errors: {server: data.message || 'Login failed'}
+                    });
+                    return;
+                }
+
+                const data = await res.json();
+                navigate('/');
+
+            } catch (error) {
+                dispatch({
+                    type: 'setErrors',
+                    errors: { server: 'Something went wrong. Please try again.' },
+                })
+            }
+
+        }
+    }
 
     return (
     <div className='flex flex-col justify-center items-center h-screen font-roboto '>
@@ -47,14 +113,20 @@ const AuthLogin = () => {
                 <h2 className='text-4xl font-bold tracking-wide text-[#013220]'>Login</h2>
                 <p>Hi, Welcome back admin 👏</p>
             </div>
-            <form action="" className='flex flex-col gap-4'>
+            <form action="" onSubmit={handleSubmit} className='flex flex-col gap-4'>
                 <div className='flex flex-col gap-1'>
-                    <label htmlFor="">Username</label>
+                    <label htmlFor="username">Username</label>
                     <input type="text" name='username' value={state.username}   onChange={handleChange}  placeholder='Enter your username' className='p-2 border border-gray-300 font-roboto rounded-md outline-0'  />
+                    {state.errors.username && (
+                        <p className="text-red-500 text-sm">{state.errors.username}</p>
+                    )}
                 </div>
                 <div className='flex flex-col gap-1'>
-                    <label htmlFor="">Password</label>
+                    <label htmlFor="password">Password</label>
                     <input type="password" value={state.password} onChange={handleChange} name='password' placeholder='Enter your password' className='p-2 border border-gray-300 font-roboto rounded-md outline-0' />
+                    {state.errors.password && (
+                        <p className="text-red-500 text-sm">{state.errors.password}</p>
+                    )}
                 </div>
                 <div className='flex justify-between'>
                     <div className='flex flex-row-reverse gap-1 justify-center'>
