@@ -1,10 +1,46 @@
-import React, { useState } from 'react'
+import React, { useReducer, useState } from 'react'
 
 const AuthLogin = () => {
-    const [isHover, setIsHover] = useState(false);
-    console.log(isHover);
+    const initialState = {
+        username: '',
+        password: '',
+        errors: {},
+    }
 
-  return (
+    function reducer(state, action) {
+        switch (action.type) {
+            case 'updateField':
+                return {
+                    ...state,
+                    [action.field] : action.value
+                }
+            case 'setErrors' : {
+                return {
+                    ...state,
+                    errors: action.errors,
+                }
+            }
+            default:
+                return state;
+        }
+    }
+    const [state, dispatch] = useReducer(reducer, initialState)
+
+    console.log(state);
+
+    const [isHover, setIsHover] = useState(false);
+
+    const handleChange =  (e) => {
+        const {name, value} = e.target;
+        dispatch({
+            type: 'updateField',
+            field: name,
+            value: value
+        })
+    }
+
+
+    return (
     <div className='flex flex-col justify-center items-center h-screen font-roboto '>
         <div className='w-[380px]'>
             <div className='mb-10 flex flex-col gap-2'>
@@ -14,11 +50,11 @@ const AuthLogin = () => {
             <form action="" className='flex flex-col gap-4'>
                 <div className='flex flex-col gap-1'>
                     <label htmlFor="">Username</label>
-                    <input type="text" placeholder='Enter your username' className='p-2 border border-gray-300 font-roboto rounded-md outline-0'  />
+                    <input type="text" name='username' value={state.username}   onChange={handleChange}  placeholder='Enter your username' className='p-2 border border-gray-300 font-roboto rounded-md outline-0'  />
                 </div>
                 <div className='flex flex-col gap-1'>
                     <label htmlFor="">Password</label>
-                    <input type="password" placeholder='Enter your password' className='p-2 border border-gray-300 font-roboto rounded-md outline-0' />
+                    <input type="password" value={state.password} onChange={handleChange} name='password' placeholder='Enter your password' className='p-2 border border-gray-300 font-roboto rounded-md outline-0' />
                 </div>
                 <div className='flex justify-between'>
                     <div className='flex flex-row-reverse gap-1 justify-center'>
