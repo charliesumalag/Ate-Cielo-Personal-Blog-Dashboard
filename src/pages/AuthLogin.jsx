@@ -79,9 +79,7 @@ const AuthLogin = () => {
                 // 3. Check for server-side validation errors
                 if (!res.ok) {
                     const data = await res.json();
-                    console.log(data.errors);
                     console.log(state.errors);
-
 
                     dispatch({
                         type: 'setErrors',
@@ -109,7 +107,7 @@ const AuthLogin = () => {
             </div>
             <form action="" onSubmit={handleSubmit} className='flex flex-col gap-4'>
                 <div className='flex flex-col gap-1'>
-                       <p className="text-red-500 text-sm">{state.errors.general}</p>
+                       <p className="text-red-500 text-sm">{state.errors.backerror}</p>
                     <label htmlFor="username">Username</label>
                     <input type="text" name='username' value={state.username}   onChange={handleChange}  placeholder='Enter your username' className='p-2 border border-gray-300 font-roboto rounded-md outline-0'  />
                     {state.errors.username && (
