@@ -1,8 +1,8 @@
-import React, { useContext, useReducer, useState } from 'react'
+import React, {  useReducer, useState } from 'react'
 import { useNavigate } from "react-router-dom";
 
 const AuthLogin = () => {
-    const {setToken} = useContext(AppContext);
+
     const navigate = useNavigate();
     const initialState = {
         username: '',
@@ -10,7 +10,6 @@ const AuthLogin = () => {
         errors: {},
         isSubmitting: false,
     }
-
 
 
     function reducer(state, action) {
@@ -50,61 +49,56 @@ const AuthLogin = () => {
         })
     }
     const handleSubmit = async (e) => {
-
-        const errs = {};
         e.preventDefault();
 
-        if (!state.username){
-            errs.username = 'Username Requried';
+    // 1. Client-side validation
+        const errs = {};
+        if (!state.username) {
+            errs.username = 'Username Required';
         }
-        if (!state.password){
+        if (!state.password) {
             errs.password = 'Password Required';
-        }else if (state.password.length < 4){
-            errs.password = 'Password must be at least 4 characters'
+        } else if (state.password.length < 4) {
+            errs.password = 'Password must be at least 4 characters';
         }
 
-
-        if (Object.keys(errs).length !== 0) {
-            dispatch({
-                type: 'setErrors',
-                errors: errs
-            })
+        if (Object.keys(errs).length > 0) {
+            dispatch({ type: 'setErrors', errors: errs });
+            return;
         }else{
-            dispatch({
-                type: 'submit',
-            })
-            console.log(state.username, state.password);
-
-
+            dispatch({ type: 'submit' });
             try {
                 const res = await fetch("/api/login", {
-                    method: 'post',
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         username: state.username,
                         password: state.password
                     })
-                })
+                });
+                // 3. Check for server-side validation errors
                 if (!res.ok) {
                     const data = await res.json();
+                    console.log(data.errors);
+                    console.log(state.errors);
+
+
                     dispatch({
                         type: 'setErrors',
-                        errors: {server: data.message || 'Login failed'}
+                        errors: data.errors
                     });
                     return;
                 }
-
-                const data = await res.json();
+                // localStorage.setItem("token", data.token);
                 navigate('/');
-
-            } catch (error) {
+            } catch (errs) {
                 dispatch({
                     type: 'setErrors',
-                    errors: { server: 'Something went wrong. Please try again.' },
-                })
+                    errors: { general: `.Something went wrong. Please try again. ${errs}` }
+                });
             }
-
         }
-    }
+    };
 
     return (
     <div className='flex flex-col justify-center items-center h-screen font-roboto '>
@@ -115,6 +109,7 @@ const AuthLogin = () => {
             </div>
             <form action="" onSubmit={handleSubmit} className='flex flex-col gap-4'>
                 <div className='flex flex-col gap-1'>
+                       <p className="text-red-500 text-sm">{state.errors.general}</p>
                     <label htmlFor="username">Username</label>
                     <input type="text" name='username' value={state.username}   onChange={handleChange}  placeholder='Enter your username' className='p-2 border border-gray-300 font-roboto rounded-md outline-0'  />
                     {state.errors.username && (
