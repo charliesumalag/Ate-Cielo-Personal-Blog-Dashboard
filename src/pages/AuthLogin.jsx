@@ -1,43 +1,11 @@
 import React, {  useReducer, useState } from 'react'
 import { useNavigate } from "react-router-dom";
+import { initialAuthState,  AuthLoginReducer} from "../reducers/AuthReducer";
 
 const AuthLogin = () => {
 
     const navigate = useNavigate();
-    const initialState = {
-        username: '',
-        password: '',
-        errors: {},
-        isSubmitting: false,
-    }
-
-
-    function reducer(state, action) {
-        switch (action.type) {
-            case 'updateField':
-                return {
-                    ...state,
-                    [action.field] : action.value
-                }
-            case 'setErrors' : {
-                return {
-                    ...state,
-                    errors: action.errors,
-                }
-            }
-            case 'submit' : {
-                return {
-                    ...state,
-                    isSubmitting: true,
-                }
-            }
-            default:
-                return state;
-        }
-    }
-    const [state, dispatch] = useReducer(reducer, initialState)
-
-
+    const [state, dispatch] = useReducer(AuthLoginReducer, initialAuthState)
     const [isHover, setIsHover] = useState(false);
 
     const handleChange =  (e) => {
@@ -76,10 +44,14 @@ const AuthLogin = () => {
                         password: state.password
                     })
                 });
+
+                // console.log(state.errors);
+
+
                 // 3. Check for server-side validation errors
                 if (!res.ok) {
                     const data = await res.json();
-                    console.log(state.errors);
+
 
                     dispatch({
                         type: 'setErrors',
