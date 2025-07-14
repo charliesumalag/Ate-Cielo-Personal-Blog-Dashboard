@@ -2,7 +2,7 @@ export const authRegisterInitialState = {
     name : '',
     username : '',
     password : '',
-    confirm_password : '',
+    password_confirmation : '',
     errors: {},
 }
 

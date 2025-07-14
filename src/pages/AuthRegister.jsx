@@ -1,45 +1,74 @@
 import React, { useState } from 'react'
 import { useReducer } from 'react'
 import { authRegisterInitialState,  authRegisterReducer} from "../reducers/AutRegisterReducer";
+import { useNavigate } from 'react-router-dom';
 
 const AuthRegister = () => {
   const [state, dispatch] = useReducer(authRegisterReducer, authRegisterInitialState);
   const [isHover, setIsHover] = useState(false);
+  const navigate = useNavigate();
 
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e)  => {
+     e.preventDefault();
 
-    const frontValiErrs = {};
+    const errs = {};
     if (!state.name) {
-      frontValiErrs.name = 'Name Required';
+      errs.name = 'Name Required';
     }
     if (!state.username) {
-      frontValiErrs.username = 'Username Required';
+      errs.username = 'Username Required';
     }
     if (!state.password) {
-      frontValiErrs.password = 'Password Required';
+      errs.password = 'Password Required';
     } else if (state.password.length < 4) {
-      frontValiErrs.password = 'Password must be at lease 4 character';
+      errs.password = 'Password must be at lease 4 character';
     }
-    if (!state.confirm_password) {
-      frontValiErrs.confirm_password = 'Confirm Password Required'
-    }else if (state.confirm_password.length < 4) {
-      frontValiErrs.confirm_password = 'Confirm Password must be at lease 4 character';
-    }
-
-    if (state.password !== state.confirm_password) {
-      frontValiErrs.confirm_password = 'Pasword Confirmation do not match';
+    if (!state.password_confirmation) {
+      errs.password_confirmation = 'Confirm Password Required'
+    }else if (state.password_confirmation.length < 4) {
+      errs.password_confirmation = 'Confirm Password must be at lease 4 character';
     }
 
-    if (Object.keys(frontValiErrs).length > 0) {
+    if (state.password !== state.password_confirmation) {
+      errs.password_confirmation = 'Pasword Confirmation do not match';
+    }
+
+    if (Object.keys(errs).length > 0) {
      dispatch({
       type: 'setErrors',
-      errors: frontValiErrs,
+      errors: errs,
      });
     }else{
-      alert('you pass the front end validation')
+      console.log('form submitted');
 
+      // saving to database
+      try {
+        const res = await fetch("/api/register", {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: state.name,
+            username: state.username,
+            password: state.password,
+            password_confirmation : state.password_confirmation
+          })
+        })
+        const data = await res.json();
+        if (!res.ok) {
+          dispatch({
+            type: 'setErrors',
+            errors: data.errors,
+          });
+          return;
+        }
+        navigate("/")
+      } catch (err) {
+        dispatch({
+          type: 'setErrors',
+          errors: { general: 'Something went wrong. Please try again.' }
+        });
+      }
     }
 
   }
@@ -86,15 +115,15 @@ const AuthRegister = () => {
                     )}
                 </div>
                 <div className='flex flex-col gap-1'>
-                    <label htmlFor="password">Password</label>
-                    <input type="password" value={state.confirm_password}  onChange={handleChange} name='confirm_password' placeholder='Conirm Password' className='p-2 border border-gray-300 font-roboto rounded-md outline-0' />
-                    {state.errors.confirm_password && (
-                        <p className="text-red-500 text-sm">{state.errors.confirm_password}</p>
+                    <label htmlFor="password_confirmation">Password</label>
+                    <input type="password" value={state.password_confirmation}  onChange={handleChange} name='password_confirmation' placeholder='Conirm Password' className='p-2 border border-gray-300 font-roboto rounded-md outline-0' />
+                    {state.errors.password_confirmation && (
+                        <p className="text-red-500 text-sm">{state.errors.password_confirmation}</p>
                     )}
                 </div>
                 <button className='bg-[#013220] font-roboto tracking-widest text-white p-2 mt-6 rounded-md cursor-pointer'>Register</button>
                 <p className='text-gray-500' onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>Already have an account?
-                    <span className='text-[#013220] ml-1 cursor-pointer'>Login</span>
+                    <span className='text-[#013220] ml-1 cursor-pointer'>Register</span>
                     <span>
                         <i className={isHover ? 'fa-solid fa-arrow-up cursor-pointer rotate-45 text-[#013220] font-extralight text-xs pb-1.5 pr-3 ' : 'fa-solid fa-arrow-up rotate-45 cursor-pointer font-extralight text-[#013220] text-xs pb-1.5 pr-2 '}></i>
                     </span>

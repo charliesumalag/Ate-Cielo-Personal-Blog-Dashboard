@@ -1,8 +1,31 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import profilePic from "../assets/img/profile.jpg";
 
 const Nav = () => {
+    const navigate = useNavigate();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch("/api/logout", {
+                method: 'POST',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
+            if (!res.ok) {
+                throw new Error("Logout Failed");
+            }
+            localStorage.removeItem('token');
+            navigate('/login')
+
+        } catch (err) {
+            console.log('Error logging out', err);
+        }
+
+    }
   return (
     <nav className='bg-[#F8F8FA] flex flex-col justify-between text-black py-6 w-[260px] px-6 h-full'>
         <div className='w-full'>
@@ -36,9 +59,9 @@ const Nav = () => {
                     <p className='text-gray-400 text-sm font-roboto' >Administrator</p>
                 </div>
             </div>
-            <form action="" className='flex gap-2 items-center pl-6 text-gray-400 '>
+            <form action="" onSubmit={handleSubmit} className='flex gap-2 items-center pl-6 text-gray-400 '>
                 <i className="fa-solid fa-arrow-right-from-bracket text-sm"></i>
-                <button className='font-roboto text-sm'>Logout</button>
+                <button className='font-roboto text-sm hover:cursor-pointer'>Logout</button>
             </form>
         </div>
     </nav>

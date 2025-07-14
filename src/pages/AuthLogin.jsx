@@ -49,17 +49,15 @@ const AuthLogin = () => {
 
 
                 // 3. Check for server-side validation errors
+                const data = await res.json();
                 if (!res.ok) {
-                    const data = await res.json();
-
-
                     dispatch({
                         type: 'setErrors',
                         errors: data.errors
                     });
                     return;
                 }
-                // localStorage.setItem("token", data.token);
+                localStorage.setItem("token", data.token);
                 navigate('/');
             } catch (errs) {
                 dispatch({
