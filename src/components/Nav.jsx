@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import profilePic from "../assets/img/profile.jpg";
 
@@ -26,6 +26,9 @@ const Nav = () => {
         }
 
     }
+    const [open, setOpen] = useState(false);
+
+
   return (
     <nav className='bg-[#F8F8FA] flex flex-col justify-between text-black py-6 w-[350px] px-6 h-full'>
         <div className='w-full'>
@@ -40,11 +43,16 @@ const Nav = () => {
                 <li className='flex gap-2 w-full text-gray-700 text-[14px]'>
                     <NavLink className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 py-1 text-[#013220] font-medium' : ' w-full px-4 py-1 ' } to='/'><span><i className="fa-solid fa-border-all mr-2 text-gray-500"></i></span>Dashboard</NavLink>
                 </li>
-                <li className='flex gap-2 w-full text-gray-700 text-[14px]'>
-                    <NavLink to='/posts' className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 '}><span className='mr-2'><i className="fa-solid fa-list"></i></span>Posts</NavLink>
-                </li>
-                <li className='flex gap-2 w-full text-gray-700 text-[14px]'>
-                    <NavLink to='/create' className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 '}><span className='mr-2'><i className="fa-solid fa-plus"></i></span>Create Post</NavLink>
+                <li className='flex flex-col gap-2 w-full text-gray-700 text-[14px]'>
+                    <NavLink onClick={() => setOpen(prevState => !prevState)} className={({isActive}) => isActive ? ' w-full px-4 py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 '}><span className='mr-2'><i className="fa-solid fa-list"></i></span>Posts</NavLink>
+                    {open && (
+                        <ul className='pl-12 text-gray-500 w-full  text-[14px]'>
+                        <li className='w-full'>
+                            <NavLink to='create' className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 block py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 block '}><span className='mr-2'><i className="fa-solid fa-plus"></i></span>Create Post</NavLink>
+                        </li>
+                    </ul>
+                    )}
+
                 </li>
                 <li className='flex gap-2 w-full text-gray-700 text-[14px]'>
                     <NavLink to='/categories' className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 '}><span className='mr-2 text-gray-500'><i className="fa-solid fa-layer-group"></i></span>Categories</NavLink>
