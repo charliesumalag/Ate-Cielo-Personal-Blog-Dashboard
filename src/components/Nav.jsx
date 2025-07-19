@@ -27,7 +27,7 @@ const Nav = () => {
 
     }
   return (
-    <nav className='bg-[#F8F8FA] flex flex-col justify-between text-black py-6 w-[260px] px-6 h-full'>
+    <nav className='bg-[#F8F8FA] flex flex-col justify-between text-black py-6 w-[350px] px-6 h-full'>
         <div className='w-full'>
             <div className='flex justify-between pr-2 pl-3 items-center mb-8'>
                 <div className='flex gap-3 '>
@@ -46,7 +46,10 @@ const Nav = () => {
                 <li className='flex gap-2 w-full text-gray-700 text-[14px]'>
                     <NavLink to='/create' className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 '}><span className='mr-2'><i className="fa-solid fa-plus"></i></span>Create Post</NavLink>
                 </li>
-                  <li className='flex gap-2 w-full text-gray-700 text-[14px]'>
+                <li className='flex gap-2 w-full text-gray-700 text-[14px]'>
+                    <NavLink to='/categories' className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 '}><span className='mr-2 text-gray-500'><i className="fa-solid fa-layer-group"></i></span>Categories</NavLink>
+                </li>
+                <li className='flex gap-2 w-full text-gray-700 text-[14px]'>
                     <NavLink to='/settings' className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 '}><span className='mr-2 text-gray-500'><i className="fa-solid fa-gear"></i></span>Settings</NavLink>
                 </li>
             </ul>

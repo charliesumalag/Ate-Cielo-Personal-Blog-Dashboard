@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./pages/Layout";
 import Dashboard from "./pages/Dashboard";
 import Posts from "./pages/Posts";
+import Categories from "./pages/Categories";
 import Create from './pages/Create';
 import Settings from './pages/Settings';
 import AuthLogin from './pages/AuthLogin';
@@ -19,6 +20,7 @@ const App = () => {
         <Route path='posts' element={<Posts />} ></Route>
         <Route path='create' element={<Create />} ></Route>
         <Route path='settings' element={<Settings />} ></Route>
+        <Route path='categories' element={< Categories />} ></Route>
       </Route>
     </Routes>
     </BrowserRouter>
