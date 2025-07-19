@@ -16,6 +16,8 @@ const Nav = () => {
                 }
             });
             if (!res.ok) {
+                console.log('logout faild with status: ', res.status);
+
                 throw new Error("Logout Failed");
             }
             localStorage.removeItem('token');
@@ -26,7 +28,10 @@ const Nav = () => {
         }
 
     }
-    const [open, setOpen] = useState(false);
+    const [activeMenu, setActiveMenu] = useState(false);
+    const handleMenuClick = (menu) => {
+        setActiveMenu(prev => (prev === menu ? null : menu));
+    };
 
 
   return (
@@ -41,18 +46,17 @@ const Nav = () => {
             </div>
             <ul className='flex flex-col gap-3 w-full font-roboto'>
                 <li className='flex gap-2 w-full text-gray-700 text-[14px]'>
-                    <NavLink className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 py-1 text-[#013220] font-medium' : ' w-full px-4 py-1 ' } to='/'><span><i className="fa-solid fa-border-all mr-2 text-gray-500"></i></span>Dashboard</NavLink>
+                    <NavLink onClick={() => setActiveMenu(null)} className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 py-1 text-[#013220] font-medium' : ' w-full px-4 py-1 ' } to='/'><span><i className="fa-solid fa-border-all mr-2 text-gray-500"></i></span>Dashboard</NavLink>
                 </li>
                 <li className='flex flex-col gap-2 w-full text-gray-700 text-[14px]'>
-                    <NavLink onClick={() => setOpen(prevState => !prevState)} className={({isActive}) => isActive ? ' w-full px-4 py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 '}><span className='mr-2'><i className="fa-solid fa-list"></i></span>Posts</NavLink>
-                    {open && (
-                        <ul className='pl-12 text-gray-500 w-full  text-[14px]'>
+                    <NavLink onClick={() => handleMenuClick('post')} className={({isActive}) => isActive ? ' w-full px-4 py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 '}><span className='mr-2'><i className="fa-solid fa-list"></i></span>Posts</NavLink>
+                    {activeMenu === 'post' && (
+                        <ul className='pl-12 text-gray-400 w-full  text-[13px]'>
                         <li className='w-full'>
-                            <NavLink to='create' className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 block py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 block '}><span className='mr-2'><i className="fa-solid fa-plus"></i></span>Create Post</NavLink>
+                            <NavLink to='create' onClick={() => setActiveMenu('post')} className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 block py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 block '}><span className='mr-2'><i className="fa-solid fa-plus"></i></span>Create Post</NavLink>
                         </li>
                     </ul>
                     )}
-
                 </li>
                 <li className='flex gap-2 w-full text-gray-700 text-[14px]'>
                     <NavLink to='/categories' className={({isActive}) => isActive ? 'bg-[#E2F0ED] w-full px-4 py-1 font-medium text-[#013220]' : 'w-full px-4 py-1 '}><span className='mr-2 text-gray-500'><i className="fa-solid fa-layer-group"></i></span>Categories</NavLink>
