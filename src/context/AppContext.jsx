@@ -5,6 +5,7 @@ export const AppContext = createContext();
 export default function AppProvider({children}) {
     const [token, setToken] = useState(localStorage.getItem('token'));
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     async function getUser() {
         const res = await fetch('/api/user', {
@@ -17,17 +18,19 @@ export default function AppProvider({children}) {
         if (res.ok) {
             setUser(data);
         }
+        setLoading(false);
     }
 
     useEffect(() => {
         if (token) {
-            console.log('user getted.');
-            getUser()
+            getUser();
+        }else{
+           setLoading(false);
         }
     }, [token]);
 
     return (
-        <AppContext.Provider value={{token, user, setToken, setUser }}>
+        <AppContext.Provider value={{token, user, setToken, setUser, loading }}>
             {children}
         </AppContext.Provider>
     )

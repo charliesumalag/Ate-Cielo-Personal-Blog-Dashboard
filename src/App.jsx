@@ -11,15 +11,15 @@ import AuthRegister from './pages/AuthRegister';
 import { AppContext } from './context/AppContext';
 
 const App = () => {
-  const {user} = useContext(AppContext);
-  console.log(user);
+  const {user, loading} = useContext(AppContext);
+  console.log(loading);
 
   return (
     <BrowserRouter>
     <Routes>
-      <Route path='/login' element={ user ? <Layout /> : <AuthLogin />}></Route>
-      <Route path='/register' element={user ? <Layout /> : <AuthRegister />}></Route>
-      <Route path='/' element={user ? <Layout /> : <AuthLogin />  }>
+      <Route path='/login' element={ loading ? (<div></div>) : user ? <Layout /> : <AuthLogin />}></Route>
+      <Route path='/register' element={ loading ? (<div></div>) : user ? <Layout /> : <AuthRegister />}></Route>
+      <Route path='/' element={ user ? <Layout /> : <AuthLogin />  }>
         <Route index element={<Dashboard /> } ></Route>
         <Route path='posts' element={user ? <Posts /> : <AuthLogin />} ></Route>
         <Route path='create' element={user ? <Create /> : <AuthLogin />} ></Route>
