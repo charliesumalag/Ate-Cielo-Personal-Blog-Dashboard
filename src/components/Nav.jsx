@@ -37,8 +37,6 @@ const Nav = () => {
     const handleMenuClick = (menu) => {
         setActiveMenu(prev => (prev === menu ? null : menu));
     };
-
-     console.log(user);
   return (
     <nav className='bg-[#F8F8FA] flex flex-col justify-between text-black py-6 w-[350px] px-6 h-full'>
         <div className='w-full'>

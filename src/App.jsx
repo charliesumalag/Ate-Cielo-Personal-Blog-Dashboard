@@ -12,7 +12,6 @@ import { AppContext } from './context/AppContext';
 
 const App = () => {
   const {user, loading} = useContext(AppContext);
-  console.log(loading);
 
   return (
     <BrowserRouter>
