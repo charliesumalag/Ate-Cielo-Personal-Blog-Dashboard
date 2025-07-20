@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useReducer } from 'react'
 import { authRegisterInitialState,  authRegisterReducer} from "../reducers/AutRegisterReducer";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, NavLink } from 'react-router-dom';
+import { AppContext } from '../context/AppContext';
 
 const AuthRegister = () => {
+  const {setToken} = useContext(AppContext);
   const [state, dispatch] = useReducer(authRegisterReducer, authRegisterInitialState);
   const [isHover, setIsHover] = useState(false);
   const navigate = useNavigate();
@@ -62,6 +64,8 @@ const AuthRegister = () => {
           });
           return;
         }
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
         navigate("/")
       } catch (err) {
         dispatch({
@@ -122,12 +126,12 @@ const AuthRegister = () => {
                     )}
                 </div>
                 <button className='bg-[#013220] font-roboto tracking-widest text-white p-2 mt-6 rounded-md cursor-pointer'>Register</button>
-                <p className='text-gray-500' onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>Already have an account?
-                    <span className='text-[#013220] ml-1 cursor-pointer'>Register</span>
+                <NavLink to='/login' className='text-gray-500' onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>Already have an account?
+                    <span className='text-[#013220] ml-1 cursor-pointer'>Login</span>
                     <span>
                         <i className={isHover ? 'fa-solid fa-arrow-up cursor-pointer rotate-45 text-[#013220] font-extralight text-xs pb-1.5 pr-3 ' : 'fa-solid fa-arrow-up rotate-45 cursor-pointer font-extralight text-[#013220] text-xs pb-1.5 pr-2 '}></i>
                     </span>
-                </p>
+                </NavLink>
             </form>
         </div>
     </div>

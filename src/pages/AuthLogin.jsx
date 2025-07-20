@@ -1,9 +1,10 @@
-import React, {  useReducer, useState } from 'react'
-import { useNavigate } from "react-router-dom";
+import React, {  useContext, useReducer, useState } from 'react'
+import { useNavigate, NavLink } from "react-router-dom";
 import { initialAuthState,  AuthLoginReducer} from "../reducers/AuthReducer";
+import { AppContext } from '../context/AppContext';
 
 const AuthLogin = () => {
-
+    const {setToken} = useContext(AppContext)
     const navigate = useNavigate();
     const [state, dispatch] = useReducer(AuthLoginReducer, initialAuthState)
     const [isHover, setIsHover] = useState(false);
@@ -50,6 +51,7 @@ const AuthLogin = () => {
 
                 // 3. Check for server-side validation errors
                 const data = await res.json();
+
                 if (!res.ok) {
                     dispatch({
                         type: 'setErrors',
@@ -57,6 +59,9 @@ const AuthLogin = () => {
                     });
                     return;
                 }
+                console.log(data.token);
+
+                setToken(data.token);
                 localStorage.setItem("token", data.token);
                 navigate('/');
             } catch (errs) {
@@ -99,12 +104,12 @@ const AuthLogin = () => {
                     <button className='text-[#013220] cursor-pointer'>Forgot Password?</button>
                 </div>
                 <button className='bg-[#013220] font-roboto tracking-widest text-white p-2 mt-6 rounded-md cursor-pointer'>Login</button>
-                <p className='text-gray-500' onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>Not registered yet?
+                <NavLink to='/register' className='text-gray-500' onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>Not registered yet?
                     <span className='text-[#013220] ml-1 cursor-pointer'>Create an account</span>
                     <span>
                         <i className={isHover ? 'fa-solid fa-arrow-up cursor-pointer rotate-45 text-[#013220] font-extralight text-xs pb-1.5 pr-3 ' : 'fa-solid fa-arrow-up rotate-45 cursor-pointer font-extralight text-[#013220] text-xs pb-1.5 pr-2 '}></i>
                     </span>
-                </p>
+                </NavLink>
             </form>
         </div>
     </div>

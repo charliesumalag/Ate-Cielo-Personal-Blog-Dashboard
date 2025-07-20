@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./pages/Layout";
 import Dashboard from "./pages/Dashboard";
@@ -8,19 +8,23 @@ import Create from './pages/Create';
 import Settings from './pages/Settings';
 import AuthLogin from './pages/AuthLogin';
 import AuthRegister from './pages/AuthRegister';
+import { AppContext } from './context/AppContext';
 
 const App = () => {
+  const {user} = useContext(AppContext);
+  console.log(user);
+
   return (
     <BrowserRouter>
     <Routes>
-      <Route path='/login' element={<AuthLogin />}></Route>
-      <Route path='/register' element={<AuthRegister />}></Route>
-      <Route path='/' element={ <Layout /> }>
-        <Route index element={<Dashboard />} ></Route>
-        <Route path='posts' element={<Posts />} ></Route>
-        <Route path='create' element={<Create />} ></Route>
-        <Route path='settings' element={<Settings />} ></Route>
-        <Route path='categories' element={< Categories />} ></Route>
+      <Route path='/login' element={ user ? <Layout /> : <AuthLogin />}></Route>
+      <Route path='/register' element={user ? <Layout /> : <AuthRegister />}></Route>
+      <Route path='/' element={user ? <Layout /> : <AuthLogin />  }>
+        <Route index element={<Dashboard /> } ></Route>
+        <Route path='posts' element={user ? <Posts /> : <AuthLogin />} ></Route>
+        <Route path='create' element={user ? <Create /> : <AuthLogin />} ></Route>
+        <Route path='settings' element={user ? <Settings /> : <AuthLogin />} ></Route>
+        <Route path='categories' element={ user ? < Categories /> : <AuthLogin/>} ></Route>
       </Route>
     </Routes>
     </BrowserRouter>

@@ -1,8 +1,11 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import profilePic from "../assets/img/profile.jpg";
+import { AppContext } from '../context/AppContext';
+
 
 const Nav = () => {
+    const {user, setUser, setToken} = useContext(AppContext);
     const navigate = useNavigate();
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -11,17 +14,19 @@ const Nav = () => {
             const res = await fetch("/api/logout", {
                 method: 'POST',
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 }
             });
-            if (!res.ok) {
-                console.log('logout faild with status: ', res.status);
+            if (res.ok) {
+                console.log('logout successful');
 
-                throw new Error("Logout Failed");
+               setToken(null);
+                setUser(null);
+                localStorage.removeItem('token');
+                navigate('/login')
             }
-            localStorage.removeItem('token');
-            navigate('/login')
+
 
         } catch (err) {
             console.log('Error logging out', err);
@@ -33,14 +38,15 @@ const Nav = () => {
         setActiveMenu(prev => (prev === menu ? null : menu));
     };
 
-
+     console.log(user);
   return (
     <nav className='bg-[#F8F8FA] flex flex-col justify-between text-black py-6 w-[350px] px-6 h-full'>
         <div className='w-full'>
             <div className='flex justify-between pr-2 pl-3 items-center mb-8'>
                 <div className='flex gap-3 '>
                     <span><i className="fa-solid fa-blog text-[#013220]"></i></span>
-                    <h2 className='font-roboto  text-xl font-bold text-[#678579] tracking-[0.9px] '>Cielo</h2>
+                    {user ? (<h2 className='font-roboto  text-xl font-bold text-[#678579] tracking-[0.9px] '>{user.name}</h2>) : (<h2 className='font-roboto  text-xl font-bold text-[#678579] tracking-[0.9px] '>User</h2>)}
+
                 </div>
                 <span className='cursor-pointer'><i className="fa-solid fa-compress font-bold text-sm" ></i></span>
             </div>
@@ -70,7 +76,8 @@ const Nav = () => {
             <div className='flex items-center gap-2'>
                 <img src={profilePic} alt="" className='w-[50px] rounded-full' />
                 <div>
-                    <p className='text-base font-roboto font-bold text-[#013220]'>Cielo Sumalag</p>
+                    {user ? (<p className='text-base font-roboto font-bold text-[#013220]'>{user.name}</p>) : (<p className='text-base font-roboto font-bold text-[#013220]'>User</p>)}
+
                     <p className='text-gray-400 text-sm font-roboto' >Administrator</p>
                 </div>
             </div>
